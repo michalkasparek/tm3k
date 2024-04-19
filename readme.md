@@ -4,7 +4,7 @@
 
 Stačí rozbalit do složky s projektem:
 
-```curl -LkSs https://github.com/michalkasparek/tm3k/archive/main.zip -o repo.zip && unzip repo.zip && rm repo.zip```
+```curl -LkSs https://github.com/michalkasparek/tm3k/archive/main.zip -o repo.zip && unzip repo.zip && mv tm3k-main tm3k && rm repo.zip```
 
 A pak už to čaruje:
 
@@ -14,7 +14,7 @@ Prerekvizity se liší funkce od funkce. Ono se to kdyžtak ozve, že něco chyb
 
 ## Jednotlivé funkce
 
-```ascii_barchart.py``` vyrábí z pandas Series čárové ASCII grafy.
+```ascii_barchart.py``` vyrábí z pandas Series ASCII grafy.
 
 ```irozhlas_graf``` vyrábí z pandas Series grafy v HighCharts.
 
