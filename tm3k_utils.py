@@ -50,6 +50,7 @@ def irozhlas_graf(
     target="",
     titulek="",
     podtitulek="",
+    naproti=[],
     osay=" ",
     osay2=" ",
     osaymin=None,
@@ -153,9 +154,20 @@ def irozhlas_graf(
             nastaveni["yAxis"] = [osa_procent]
             druha_osa = 0
 
+    if len(naproti) > 0:
+        druha_osa = 1
+        druha_osa_y = {
+            "title": {"text": osay2},
+            "opposite": True,
+            "max": naproti[0].max(),
+            "min": 0,
+        }
+        nastaveni["yAxis"].append(druha_osa_y)
+
     my_chart = Chart(container=target, options=nastaveni)
 
     procenta = [p.name for p in procenta]
+    naproti = [n.name for n in naproti]
     skryte = [s.name for s in skryte]
 
     def vykresleni(serie, typ):
@@ -166,6 +178,10 @@ def irozhlas_graf(
                 viditelnost = False
             else:
                 viditelnost = True
+
+            ktera_osa = 0
+            if s.name in naproti:
+                ktera_osa = druha_osa
 
             if s.name in procenta:
                 s = [round(x * 100, zaokrouhleni) for x in s.fillna(0).to_list()]
@@ -178,13 +194,14 @@ def irozhlas_graf(
                         tooltip={"valueSuffix": " %"},
                     )
                 )
+
             else:
                 my_chart.add_series(
                     typ(
                         data=s.fillna(0).to_list(),
                         visible=viditelnost,
                         name=popisek,
-                        y_axis=0,
+                        y_axis=ktera_osa,
                     )
                 )
 
@@ -248,6 +265,7 @@ def irozhlas_tabulka(
     poradi=False,
     bez_zavorek=True,
     apostrofy=True,
+    tucne="",
 ):
     """
     Funkce generuje HTML tabulku pro přímé vložení do článku na iROZHLAS.cz z pandas DataFrame.
@@ -263,6 +281,12 @@ def irozhlas_tabulka(
         except:
             x = "–"
         return x
+
+    def vytucni(radek):
+        if radek[tucne] == True:
+            return radek.apply(lambda x: "<strong>" + str(x) + "</strong>")
+        else:
+            return radek
 
     import re
 
@@ -291,7 +315,16 @@ def irozhlas_tabulka(
                 .apply(lambda x: x.replace(".", ",").replace("%", " %"))
             )
 
-    df_tabulka = re.sub("\\n\s*", "", df_tabulka.to_html(index=False))
+    if len(tucne) > 0:
+        df_tabulka = df_tabulka.apply(vytucni, axis=1)
+
+    df_tabulka = re.sub(
+        "\\n\s*", "", df_tabulka.drop(columns=[tucne]).to_html(index=False)
+    )
+
+    if len(tucne) > 0:
+        df_tabulka = df_tabulka.replace("&lt;", "<").replace("&gt;", ">")
+
     df_tabulka = (
         df_tabulka.replace("<th>", '<th class="text-nowrap">')
         .replace("<tbody>", '<tbody class="text-sm">')
@@ -322,7 +355,7 @@ def irozhlas_tabulka(
     return df_tabulka
 
 
-def notebook2script(jupyter_notebook):
+def notebook2script(jupyter_notebook, intro=""):
     """A super-simple (and probably highly unreliable) tool for converting Jupyter Notebooks into Python scripts."""
 
     try:
@@ -332,7 +365,7 @@ def notebook2script(jupyter_notebook):
         with open(jupyter_notebook, "r", encoding="utf8") as notebook:
             notebook = json.load(notebook)
 
-            code = ""
+            code = intro + "\n"
 
             for c in notebook["cells"]:
                 if c["cell_type"] == "code":
