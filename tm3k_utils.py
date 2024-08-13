@@ -317,10 +317,9 @@ def irozhlas_tabulka(
 
     if len(tucne) > 0:
         df_tabulka = df_tabulka.apply(vytucni, axis=1)
+        df_tabulka = df_tabulka.drop(columns=[tucne])
 
-    df_tabulka = re.sub(
-        "\\n\s*", "", df_tabulka.drop(columns=[tucne]).to_html(index=False)
-    )
+    df_tabulka = re.sub("\\n\s*", "", df_tabulka.to_html(index=False))
 
     if len(tucne) > 0:
         df_tabulka = df_tabulka.replace("&lt;", "<").replace("&gt;", ">")
