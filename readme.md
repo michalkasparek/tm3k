@@ -20,6 +20,10 @@ Prerekvizity se liší funkce od funkce. Ono se to kdyžtak ozve, že něco chyb
 
 ```irozhlas_tabulka``` vyrábí z pandas DataFrame tabulky zformátované pro iROZHLAS.cz.
 
+```kristi_promin``` ostyluje grafy v Altairu do samizdatí podoby (```alt.themes.register('irozhlas', kristi_promin)``` + ```alt.themes.enable('irozhlas')```).
+
+```me_to_neurazi``` uloží altairový graf do SVG s kredity vpravo dole.
+
 ```notebook2script``` konvertuje Jupyter Notebooks na spustitelné skripty (velmi nedoporučuji používat v seriózních projektech)
 
 ```find_notebooks``` najde ve složce všechny Jupyter Notebooks.
